@@ -1,104 +1,185 @@
 <h1 align="center">AutoEDA-Tool</h1>
 
 <p align="center">
-  <strong>R Shiny application for automated exploratory data analysis.</strong><br>
-  Upload a CSV, inspect summaries, visualize distributions, detect outliers, review correlations, and explore data quality quickly.
-</p>
-
-
-
-<p align="center">
-  <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/AjaySoni-Dev/AutoEDA-Tool?style=social">
-  <img alt="GitHub forks" src="https://img.shields.io/github/forks/AjaySoni-Dev/AutoEDA-Tool?style=social">
+  <strong>Interactive R Shiny application for focused exploratory data analysis.</strong><br>
+  Upload a CSV, choose analysis tasks, inspect summaries, visualize numeric relationships, detect IQR-based outliers, review data types, and calculate pairwise correlations.
 </p>
 
 <p align="center">
-  <img alt="status: working prototype" src="https://img.shields.io/badge/status-working%20prototype-blue">
-  <img alt="stack: R / Shiny" src="https://img.shields.io/badge/stack-R%20/%20Shiny-informational">
-  <img alt="license: MIT" src="https://img.shields.io/badge/license-MIT-green">
-
+  <img alt="Status" src="https://img.shields.io/badge/status-working%20prototype-blue">
+  <img alt="R" src="https://img.shields.io/badge/language-R-276DC3">
+  <img alt="Framework" src="https://img.shields.io/badge/framework-Shiny-informational">
+  <img alt="Visualization" src="https://img.shields.io/badge/visualization-ggplot2-orange">
+  <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
 </p>
 
 <p align="center">
   <a href="#overview">Overview</a> ·
+  <a href="#what-this-repo-contains">Contents</a> ·
   <a href="#features">Features</a> ·
-  <a href="#repository-structure">Repository Structure</a> ·
-  <a href="#run-locally">Run Locally</a> ·
-  <a href="#limitations">Limitations</a>
+  <a href="#architecture">Architecture</a> ·
+  <a href="#run-locally">Run Locally</a>
 </p>
 
 ---
 
 ## Overview
 
-**AutoEDA-Tool** is an interactive exploratory data analysis app built with **R Shiny**. It helps users upload a dataset and quickly inspect numerical summaries, missing values, outliers, distributions, and correlations.
+**AutoEDA-Tool** is a single-file R Shiny prototype for interactive exploratory data analysis.
 
-The repository includes a working `script.R`, a sample `data.csv`, and one generated distribution image. The included sample dataset has **4,000 rows** and weather-related columns: `Temperature`, `Humidity`, `Air_Pressure`, `Wind_Speed`, and `Weather_Condition`.
+A user uploads a CSV, selects one or more EDA tasks, and launches an analysis session. The application then creates task-specific controls and outputs dynamically.
 
-## Features
+~~~text
+CSV upload
+   ↓
+Select EDA tasks
+   ↓
+Load dataset with read.csv
+   ↓
+Choose columns / actions
+   ↓
+Generate tables and plots
+~~~
 
-- CSV upload through Shiny UI.
-- Dataset preview and summary tables.
-- Missing value inspection.
-- Outlier detection helper logic.
-- Distribution plots.
-- Correlation analysis for numeric columns.
-- Variable selection inputs.
-- Example dataset included for quick testing.
+The implementation is intentionally transparent and educational rather than a full automated profiling platform.
 
-## Repository Structure
+---
+
+## What This Repo Contains
 
 | File | Purpose |
 |---|---|
-| `script.R` | Main R Shiny application containing UI, server logic, EDA helpers, plots, tables, and correlation workflow. |
-| `data.csv` | Sample weather dataset for testing the application. |
-| `distribution.jpg` | Example output/visual asset. |
-| `README.md` | Original documentation. |
-| `LICENSE` | MIT license. |
+| <code>script.R</code> | Complete Shiny UI, server logic, helper functions, styling, and analysis workflow. |
+| <code>data.csv</code> | Sample CSV data for local experimentation. |
+| <code>distribution.jpg</code> | Example visual asset. |
+| <code>README.md</code> | Project documentation. |
+| <code>LICENSE</code> | MIT License. |
 
-## Tech Stack
+---
 
-| Area | Tools |
+## Features
+
+| Area | Current Implementation |
 |---|---|
-| App framework | R Shiny |
-| Visualization | ggplot2, base plotting |
-| Data analysis | R data frames, summary functions, correlation logic |
-| Input format | CSV |
+| CSV ingestion | Shiny <code>fileInput</code> restricted to <code>.csv</code>. |
+| Task selection | Checkbox-driven plotting, summaries, outliers, data types, correlations, and distributions. |
+| Summary statistics | Min, median, mean, max, standard deviation, variance, and missing-value counts for selected columns. |
+| Histograms | Base-R histograms for a selected feature. |
+| Scatter plots | Base-R two-column scatter plots. |
+| Outlier analysis | IQR rule using Q1/Q3 plus a ggplot2 boxplot. |
+| Data types | Column names and R classes. |
+| Correlation | Pairwise Pearson correlation through <code>cor(..., use="complete.obs")</code>. |
+| Distribution view | ggplot2 density plot for a selected feature. |
+| Reload | Session reload button for restarting the analysis. |
+| Styling | Embedded visual styling inside <code>script.R</code>. |
+
+---
+
+## User Flow
+
+~~~text
+Open Shiny app
+   ↓
+Upload CSV
+   ↓
+Choose EDA tasks
+   ↓
+Click START ANALYSIS
+   ↓
+Select columns for each enabled task
+   ↓
+Generate plots / tables
+   ↓
+Reload when a clean session is needed
+~~~
+
+---
+
+## Architecture
+
+~~~text
+script.R
+├── Analysis helpers
+│   ├── summary_fn()
+│   ├── outlier_fn()
+│   ├── total_outlier()
+│   ├── dist_fn()
+│   ├── data_fn()
+│   └── correlation_fn()
+├── Shiny UI
+│   ├── upload controls
+│   ├── task selector
+│   ├── dynamic analysis controls
+│   └── embedded CSS
+└── Shiny server
+    ├── CSV loading
+    ├── reactive task rendering
+    ├── plot/table generation
+    └── session reload
+~~~
+
+The app keeps analysis state inside the Shiny session and does not use an external database or backend service.
+
+---
+
+## Repository Structure
+
+~~~text
+AutoEDA-Tool/
+├── script.R
+├── data.csv
+├── distribution.jpg
+├── README.md
+└── LICENSE
+~~~
+
+---
 
 ## Run Locally
 
-Install the required R packages:
+Install the two declared libraries:
 
-```r
+~~~r
 install.packages("shiny")
 install.packages("ggplot2")
-```
+~~~
 
-Run the app:
+Run:
 
-```r
+~~~r
 shiny::runApp("script.R")
-```
+~~~
 
-Or open `script.R` in RStudio and click **Run App**.
+RStudio users can also open <code>script.R</code> and use **Run App**.
 
-## Limitations
+---
 
-- The project is currently a single-file Shiny app.
-- There is no packaged `renv.lock` or dependency lock file.
-- File type support is focused on CSV.
-- Advanced profiling, automated report export, and feature recommendation are not implemented yet.
-- The UI is functional, but it can be polished for a more professional portfolio presentation.
+## Validation & Current Maturity
 
-## Recommended Improvements
+AutoEDA-Tool is best described as a **working educational prototype**.
 
-- Add `renv` for reproducible R dependencies.
-- Add screenshots to the README.
-- Add downloadable EDA report export.
-- Add categorical feature plots.
-- Add cleaner modular structure with separate UI/server/helper files.
-- Add better error handling for invalid or empty datasets.
+Current strengths include an inspectable EDA pipeline, dynamic task-specific controls, and no hidden server dependency.
+
+Current engineering limits:
+
+- no automated test suite;
+- no <code>renv.lock</code> or other dependency lock;
+- monolithic single-file application;
+- numeric plotting/correlation functions assume compatible numeric columns rather than enforcing a comprehensive schema;
+- no downloadable profiling report;
+- no claim of production statistical validation.
+
+---
+
+## Important Notes
+
+- CSV upload is the implemented ingestion path.
+- Correlation and numeric plots should be used with numeric features.
+- IQR outlier flags are heuristics; they do not prove that a value is erroneous.
+- Summary statistics and plots describe the uploaded data only and do not establish causal relationships.
+
+---
 
 ## License
 
-This project is licensed under the MIT License.
+Released under the **MIT License**. See <code>LICENSE</code>.
